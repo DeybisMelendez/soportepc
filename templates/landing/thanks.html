@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load landing_tags %}
+{% comment %}
+  Página de confirmación.
+
+  El sitio no tiene formulario: el contacto ocurre por WhatsApp. Esta pantalla
+  existe para el momento en que el visitante vuelve de la conversación y quiere
+  confirmar que su solicitud quedó registrada, y para recordarle qué datos
+  anotar antes de escribirnos (modelo de equipo y qué necesita).
+
+  Lleva `noindex`: es una pantalla intermedia, no contenido que deba aparecer
+  en resultados de búsqueda. Por eso tampoco está en el sitemap.
+{% endcomment %}
+{% block body_class %}page page--status{% endblock %}
+{% block content %}
+  <section class="status-page">
+    <div class="container container--narrow">
+      <p class="status-page__code" aria-hidden="true">WhatsApp</p>
+      <h1 class="status-page__title">Mensaje enviado</h1>
+      <p class="status-page__text">
+        Gracias por escribirnos. Te responderemos por WhatsApp con la cotización
+        del servicio que necesitas.
+      </p>
+      <h2 class="status-page__subtitle">Para cotizar más rápido, anota esto</h2>
+      <ul class="checklist">
+        <li>
+          {% include "partials/icon.html" with name="apps" %}
+          <span>Qué computadora tienes: Windows, modelo aproximado y si es laptop o de escritorio.</span>
+        </li>
+        <li>
+          {% include "partials/icon.html" with name="desktop_windows" %}
+          <span>Qué necesitas: instalar un programa, reinstalar Windows, o corregir un error.</span>
+        </li>
+        <li>
+          {% include "partials/icon.html" with name="public" %}
+          <span>En qué ciudad estás, para saber si conviene una visita o asistencia remota.</span>
+        </li>
+      </ul>
+      <div class="status-page__actions">
+        <a class="btn btn--primary btn--lg" href="{% url 'landing:home' %}">Volver al inicio</a>
+        <a class="btn btn--ghost btn--lg"
+           href="{% url 'landing:home' %}#servicios">Ver servicios</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

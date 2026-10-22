@@ -1,0 +1,18 @@
+{% comment %}
+  Datos estructurados de la pagina de inicio.
+
+  Se generan en `landing/views.py` con `json.dumps` y se inyectan aqui como
+  HTML seguro. Se hace en Python y no con un filtro de plantilla a proposito:
+
+  - `json.dumps` escapa correctamente las comillas y los acentos, cosa que un
+    `{{ valor }}` normal dejaria roto (el HTML terminaria con `&quot;` y Google
+    no parsearia el JSON).
+  - El bloque se construye con los mismos datos de `landing.content` que
+    alimentan el HTML visible, de modo que nunca pueden desincronizarse.
+
+  Los tres grafos:
+    - `ProfessionalService`: la entidad del negocio, con cobertura y contacto.
+    - `FAQPage`: habilita los resultados enriquecidos de preguntas frecuentes.
+    - `BreadcrumbList`: la ruta de navegacion (util en paginas internas).
+{% endcomment %}
+<script type="application/ld+json">{{ structured_data|safe }}</script>

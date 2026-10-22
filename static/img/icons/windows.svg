@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!--
+    Logotipo de Windows.
+
+    Simple Icons y la mayoría de sets de marcas retiraron el logo de Windows por
+    litigio de marca (Microsoft lo reclama como logotipo propietario, no como
+    «simple icon»), así que no está disponible como trazado oficial descargable
+    con licencia de uso para terceros. Este archivo reproduce su geometría: la
+    cuadrícula de cuatro paneles con la inclinación característica.
+
+    Microsoft no distribuye ni licencia este archivo. Sustituirlo en cuanto
+    exista un SVG oficial con licencia clara para terceros.
+  -->
+  <!--
+    Los cuatro paneles comparten una inclinación: el borde exterior izquierdo
+    es más bajo que el derecho en los paneles superiores, e inverso en los
+    inferiores. El hueco central es una cruz de anchura constante.
+  -->
+  <g fill="currentColor">
+    <path d="M3 5.6 10.9 4.3v7.2H3z"/>
+    <path d="M11.9 4.2 21 2.9v8.6h-9.1z"/>
+    <path d="M3 12.5h7.9v7.2L3 18.4z"/>
+    <path d="M11.9 12.5H21v8.6l-9.1-1.3z"/>
+  </g>
+</svg>

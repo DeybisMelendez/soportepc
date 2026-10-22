@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-NI" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% comment %}
+      Marca la disponibilidad de JavaScript antes de que se renderice el
+      cuerpo. `main.css` usa `.js` para activar las animaciones de entrada, de
+      modo que sin JavaScript el contenido se muestra siempre en su estado
+      final (accesible y legible) en lugar de quedar invisible.
+    {% endcomment %}
+    <script>document.documentElement.classList.add('js')</script>
+    {# ------------------------------------------------------------------ #}
+    {# SEO principal                                                          #}
+    {# ------------------------------------------------------------------ #}
+    <title>
+      {% block title %}{{ page_title }}{% endblock %}
+    </title>
+    <meta name="description"
+          content="{% block meta_description %}{{ meta_description }}{% endblock %}">
+    {% block robots_meta %}
+      {% if noindex %}<meta name="robots" content="noindex, follow">{% endif %}
+    {% endblock %}
+    {# Canonical. Siempre absoluto y derivado de DJANGO_SITE_URL, nunca del host #}
+    {# de la peticion: en desarrollo ese host es localhost.                       #}
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="alternate" hreflang="es-ni" href="{{ canonical_url }}">
+    {# ------------------------------------------------------------------ #}
+    {# Vista previa en redes sociales                                          #}
+    {# ------------------------------------------------------------------ #}
+    {# Open Graph lo consumen Facebook, WhatsApp y LinkedIn. Es lo mas importante #}
+    {# para el enlace de WhatsApp, que es el canal principal de este sitio.     #}
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:site_name" content="{{ business.name }}">
+    <meta property="og:title"
+          content="{% block og_title %}{{ page_title }}{% endblock %}">
+    <meta property="og:description"
+          content="{% block og_description %}{{ meta_description }}{% endblock %}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:locale" content="es_NI">
+    <meta property="og:image"
+          content="{{ site_url }}{% static business.og_image %}">
+    <meta property="og:image:secure_url"
+          content="{{ site_url }}{% static business.og_image %}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ business.og_image_alt }}">
+    {# Twitter/X. `summary_large_image` muestra la imagen a tamano completo; se  #}
+    {# degrada a `summary` si la plataforma no reconoce el valor.               #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"
+          content="{% block twitter_title %}{{ page_title }}{% endblock %}">
+    <meta name="twitter:description"
+          content="{% block twitter_description %}{{ meta_description }}{% endblock %}">
+    <meta name="twitter:image"
+          content="{{ site_url }}{% static business.og_image %}">
+    <meta name="twitter:image:alt" content="{{ business.og_image_alt }}">
+    {# ------------------------------------------------------------------ #}
+    {# Tema e iconos                                                          #}
+    {# ------------------------------------------------------------------ #}
+    {# Los colores replican los tokens del CSS para que la barra del navegador #}
+    {# en Android y el icono instalado coincidan con la identidad del sitio.   #}
+    <meta name="theme-color" content="#312e81">
+    <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+    <link rel="icon" href="{% static 'img/favicon.svg' %}" sizes="any">
+    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'manifest.webmanifest' %}">
+    {# ------------------------------------------------------------------ #}
+    {# Datos estructurados                                                    #}
+    {# ------------------------------------------------------------------ #}
+    {# Google usa esto para los resultados enriquecidos (servicio local y las  #}
+    {# preguntas frecuentes). El contenido sale del mismo `landing.content`    #}
+    {# que alimenta el HTML visible, de modo que nunca se desincronizan.       #}
+    {% block structured_data %}
+      {% include "partials/json_ld_home.html" %}
+    {% endblock %}
+    {# ------------------------------------------------------------------ #}
+    {# Estilos y scripts                                                      #}
+    {# ------------------------------------------------------------------ #}
+    {# Un solo archivo CSS y un solo JS, ambos sin dependencias externas.       #}
+    {# La tipografia es la del sistema: cero webfonts, cero peticiones extra,  #}
+    {# cero desplazamiento de layout y renderizado inmediato.                  #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script defer src="{% static 'js/main.js' %}"></script>
+  </head>
+  <body class="{% block body_class %}page{% endblock %}"
+        data-whatsapp-number="{{ business.whatsapp_number }}">
+    <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+    {% include "partials/header.html" %}
+    <main id="contenido">
+      {% block content %}{% endblock %}
+    </main>
+    {% include "partials/footer.html" %}
+  </body>
+</html>

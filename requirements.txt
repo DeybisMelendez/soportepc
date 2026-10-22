@@ -1,0 +1,8 @@
+# Dependencias de runtime
+Django==6.1.2
+python-dotenv==1.2.4
+Pillow==11.3.0
+
+# Stack de calidad y validacion (ver docs/ARQUITECTURA.md)
+ruff==0.14.1
+djlint==1.36.4

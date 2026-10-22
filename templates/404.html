@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% load landing_tags %}
+{% comment %}
+  Página de error 404.
+
+  Usa el mismo esqueleto y los mismos componentes que el resto del sitio. Un
+  404 con el diseño propio de la marca no es un detalle menor: quien llega por
+  un enlace equivocado o un resultado de búsqueda caducado sigue siendo un
+  visitante al que hay que darle una salida.
+
+  No hay datos estructurados propios más allá del breadcrumb que inyecta
+  `landing.views.handler_404`, y lleva `noindex` para no gastar presupuesto de
+  rastreo en una página que no debe aparecer en ningún índice.
+{% endcomment %}
+{% block body_class %}page page--status{% endblock %}
+{% block content %}
+  <section class="status-page">
+    <div class="container container--narrow">
+      <p class="status-page__code" aria-hidden="true">404</p>
+      <h1 class="status-page__title">Esta página no existe</h1>
+      <p class="status-page__text">
+        Puede que el enlace esté mal escrito o que la página haya cambiado de
+        dirección. Vuelve al inicio o escríbenos: si tu computadora necesita
+        ayuda, seguimos por aquí.
+      </p>
+      <div class="status-page__actions">
+        <a class="btn btn--primary btn--lg" href="{% url 'landing:home' %}">Ir a la página de inicio</a>
+        <a class="btn btn--whatsapp btn--lg"
+           href="{{ 'Hola, llegué a una página que no existe y necesito ayuda con mi computadora.'|whatsapp_link }}"
+           target="_blank"
+           rel="noopener">
+          {% include "partials/brand_icon.html" with name="whatsapp" %}
+          <span>Escribir por WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

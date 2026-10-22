@@ -1,0 +1,292 @@
+{% comment %}
+  Biblioteca de iconos — Google Material Symbols.
+
+  Uso:  {% include "partials/icon.html" with name="desktop_windows" %}
+
+  Origen de los iconos
+  --------------------
+  Los trazados son los de **Google Material Symbols** (Apache License 2.0), la
+  familia de iconos oficial de Google. Se copiaron aquí como SVG en línea en lugar
+  de enlazar la fuente por CDN por tres razones:
+
+    1. Cero peticiones de red. Una fuente de iconos por CDN son ~40 KB y una
+       petición bloqueante; en una conexión móvil eso se nota.
+    2. Sin dependencia externa. Si GoogleFonts cae, el sitio no se rompe.
+    3. Heredan el color con `currentColor`, así que el mismo icono sirve sobre
+       fondo claro y oscuro sin variantes.
+
+  Las claves usan ahora los nombres oficiales de Material (`desktop_windows`,
+  `support_agent`, `verified`…) en lugar de alias inventados. Facilita buscar un
+  icono nuevo en la documentación de Material y evita adivinar nombres.
+
+  Los logotipos de marca (WhatsApp, Windows…) NO están aquí: van en su propio
+  archivo `.svg` y se cargan con `partials/brand_icon.html`. Un logotipo es una
+  identidad y no puede alterarse para adaptarse al tema.
+
+  Convenciones (respectalas al añadir iconos)
+  ------------------------------------------
+  - `viewBox="0 0 24 24"` en todos, para que el tamaño se controle solo con CSS y
+    el peso visual sea homogéneo.
+  - `stroke-width="2"`: es el grosor estándar de Material Symbols. Mezclar grosores
+    hace que un conjunto de iconos parezca dibujado a mano.
+  - `stroke-linecap="round"` y `stroke-linejoin="round"`, como en el original.
+  - `fill="none"` salvo que el icono sea sólido.
+  - Siempre `aria-hidden="true"` y `focusable="false":` son decorativos y el
+    significado lo aporta el texto que los acompaña. Un icono con significado
+    propio debe ir dentro de un `<span class="visually-hidden">`.
+  - El `name` debe existir en el `{% if %}` de abajo; si no, no renderiza nada.
+
+  Referencia: https://fonts.google.com/icons
+{% endcomment %}
+{% comment %}Ordenador: instalación de Windows{% endcomment %}
+{% if name == "desktop_windows" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <rect x="2" y="3" width="20" height="14" rx="2" />
+    <path d="M8 21h8M12 17v4" />
+  </svg>
+{% endif %}
+{% comment %}Ventanas de aplicaciones: instalación de programas{% endcomment %}
+{% if name == "apps" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+  </svg>
+{% endif %}
+{% comment %}Sliders: configuración{% endcomment %}
+{% if name == "tune" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M3 6h13M19 6h2M3 12h4M10 12h11M3 18h11M17 18h4" />
+    <circle cx="17" cy="6" r="2" /><circle cx="8" cy="12" r="2" /><circle cx="15" cy="18" r="2" />
+  </svg>
+{% endif %}
+{% comment %}Herramientas: solución de problemas{% endcomment %}
+{% if name == "build" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M14.7 6.3a4 4 0 0 0 5 5L21 21H3l11.7-11.7" />
+    <path d="M6 6l2-2 2 2-2 2-2-2Z" transform="translate(0 4)" />
+  </svg>
+{% endif %}
+{% comment %}Agente de soporte con auricular: soporte remoto{% endcomment %}
+{% if name == "support_agent" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8.5 15v-1.5a3.5 3.5 0 0 1 7 0V15" />
+    <path d="M20 18a3 3 0 0 0 3-3v-2a3 3 0 0 0-3-3M4 18a3 3 0 0 1-3-3v-2a3 3 0 0 1 3-3" />
+  </svg>
+{% endif %}
+{% comment %}Camión: visita a domicilio{% endcomment %}
+{% if name == "local_shipping" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M1 4h13v12H1z" />
+    <path d="M14 8h4l3 3.5V16h-7" />
+    <circle cx="6" cy="18" r="2" /><circle cx="17" cy="18" r="2" />
+  </svg>
+{% endif %}
+{% comment %}Globo público: cobertura nacional{% endcomment %}
+{% if name == "public" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z" />
+  </svg>
+{% endif %}
+{% comment %}Casa: visita a domicilio en Managua{% endcomment %}
+{% if name == "home" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M3 10.5 12 3l9 7.5" />
+    <path d="M5 9.5V21h14V9.5" />
+    <path d="M9.5 21v-6h5v6" />
+  </svg>
+{% endif %}
+{% comment %}Bocadillo: atención en español{% endcomment %}
+{% if name == "chat" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.5 9.5 0 0 1-3.5-.7L3 21l1.7-4.6A8.4 8.4 0 0 1 3.5 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+  </svg>
+{% endif %}
+{% comment %}Mapa con capas: cobertura{% endcomment %}
+{% if name == "map" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="m2 6 6-3 8 3 6-3v15l-6 3-8-3-6 3V6Z" />
+    <path d="M8 3v15M16 6v15" />
+  </svg>
+{% endif %}
+{% comment %}Casilla verificada: garantía del trabajo{% endcomment %}
+{% if name == "verified" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="m12 2 2.5 2.2 3.2-.4 1 3 2.7 1.7-1.3 2.9 1.3 2.9-2.7 1.7-1 3-3.2-.4L12 22l-2.5-2.2-3.2.4-1-3L2.6 15.5l1.3-2.9-1.3-2.9L5.3 7l1-3 3.2.4L12 2Z" />
+    <path d="m9 12 2 2 4-4" />
+  </svg>
+{% endif %}
+{% comment %}Flecha hacia abajo: CTA secundario{% endcomment %}
+{% if name == "keyboard_arrow_down" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M12 5v14M5.5 12.5 12 19l6.5-6.5" />
+  </svg>
+{% endif %}
+{% comment %}Tres líneas: menú móvil{% endcomment %}
+{% if name == "menu" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M3 6h18M3 12h18M3 18h18" />
+  </svg>
+{% endif %}
+{% comment %}Rayo{% endcomment %}
+{% if name == "bolt" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
+  </svg>
+{% endif %}
+{% comment %}Reloj{% endcomment %}
+{% if name == "schedule" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 6.5V12l4 2" />
+  </svg>
+{% endif %}
+{% comment %}Documento{% endcomment %}
+{% if name == "description" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" />
+    <path d="M14 2v6h6M8 13h8M8 17h5" />
+  </svg>
+{% endif %}
+{% comment %}Juego de herramientas{% endcomment %}
+{% if name == "handyman" %}
+  <svg class="icon"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true"
+       focusable="false">
+    <path d="M14 6a4 4 0 0 0 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8Z" />
+    <path d="m5 5 2 2 2-2-2-2-2 2Z" transform="translate(0 6)" />
+  </svg>
+{% endif %}

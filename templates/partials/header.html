@@ -1,0 +1,97 @@
+{% load landing_tags %}
+{% load static %}
+{% comment %}
+  Barra de navegacion fija.
+
+  Es sticky, no fixed, para que el contenido fluya de forma natural y el pie de
+  pagina siga al final del documento.
+
+  El boton de menu solo existe en movil y su comportamiento lo gestiona
+  `main.js` (aria-expanded, cierre con Escape). Como el menu es un bloque normal
+  de enlaces y no un panel oculto con JavaScript, la navegacion funciona
+  aunque el script falle o este bloqueado.
+{% endcomment %}
+<header class="site-header" data-site-header>
+  <div class="container site-header__inner">
+    <a class="brand"
+       href="{% url 'landing:home' %}"
+       aria-label="{{ business.name }} — ir al inicio">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" focusable="false">
+          <rect width="32" height="32" rx="9" fill="currentColor" />
+          <path d="M9 11.5h14M9 16h14M9 20.5h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="brand__text">
+        <span class="brand__name">{{ business.name }}</span>
+        <span class="brand__tagline">Soporte técnico e instalación</span>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <ul class="site-nav__list" data-nav-list>
+        <li>
+          <a class="site-nav__link" href="#servicios" data-nav-link>Servicios</a>
+        </li>
+        <li>
+          <a class="site-nav__link" href="#proceso">Cómo funciona</a>
+        </li>
+        <li>
+          <a class="site-nav__link" href="#cobertura">Cobertura</a>
+        </li>
+        <li>
+          <a class="site-nav__link" href="#faq">Preguntas</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      {% comment %}
+        Un unico CTA de WhatsApp en toda la barra. El mensaje es generico a
+        proposito: el servicio concreto lo elige el usuario desde las tarjetas
+        de la seccion de servicios, donde si hay contexto.
+      {% endcomment %}
+      <a class="btn btn--whatsapp btn--sm"
+         href="{{ 'Hola, necesito ayuda con mi computadora. Solicito una cotización.'|whatsapp_link }}"
+         target="_blank"
+         rel="noopener">
+        {% include "partials/brand_icon.html" with name="whatsapp" %}
+        <span>WhatsApp</span>
+      </a>
+      <button class="nav-toggle"
+              type="button"
+              data-nav-toggle
+              aria-expanded="false"
+              aria-controls="nav-movil">
+        <span class="visually-hidden">Abrir menú de navegación</span>
+        {% include "partials/icon.html" with name="menu" %}
+      </button>
+    </div>
+  </div>
+  {% comment %}
+    Panel de navegacion movil. Usa `hidden` para no depender del JavaScript: si
+    el script no carga, el panel queda oculto pero los enlaces principales siguen
+    accesibles desde el pie y desde el propio contenido.
+  {% endcomment %}
+  <div class="mobile-nav" id="nav-movil" data-nav-panel hidden>
+    <ul class="mobile-nav__list">
+      <li>
+        <a class="mobile-nav__link" href="#servicios">Servicios</a>
+      </li>
+      <li>
+        <a class="mobile-nav__link" href="#proceso">Cómo funciona</a>
+      </li>
+      <li>
+        <a class="mobile-nav__link" href="#cobertura">Cobertura</a>
+      </li>
+      <li>
+        <a class="mobile-nav__link" href="#faq">Preguntas frecuentes</a>
+      </li>
+    </ul>
+    <a class="btn btn--whatsapp btn--block"
+       href="{{ 'Hola, necesito ayuda con mi computadora. Solicito una cotización.'|whatsapp_link }}"
+       target="_blank"
+       rel="noopener">
+      {% include "partials/brand_icon.html" with name="whatsapp" %}
+      <span>Solicitar cotización</span>
+    </a>
+  </div>
+</header>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Soporte PC Managua">
+  <title>Soporte PC Managua</title>
+  <!--
+    Favicon vectorial. Se prefiere al PNG por dos razones: escala nítido a
+    cualquier tamaño (el navegador lo elige para cada contexto) y pesa menos de
+    400 bytes, frente a los ~300 del raster pero sin ninguna pérdida de calidad.
+
+    El diseño replica la marca del sitio: cuadrado índigo con tres barras
+    blancas, que evocan las líneas de una lista de programas instalados.
+  -->
+  <rect width="32" height="32" rx="8" fill="#312e81"/>
+  <g stroke="#ffffff" stroke-width="2.6" stroke-linecap="round">
+    <path d="M9 11.5h14"/>
+    <path d="M9 16h14"/>
+    <path d="M9 20.5h8"/>
+  </g>
+  <!-- Acento naranja en la esquina: el mismo detalle que la imagen social. -->
+  <circle cx="25.5" cy="25.5" r="3.2" fill="#f97316"/>
+</svg>

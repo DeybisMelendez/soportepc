@@ -1,0 +1,30 @@
+{
+  "name": "Soporte PC Managua",
+  "short_name": "Soporte PC",
+  "description": "Instalación de programas, configuración y soporte técnico para computadoras. Soporte remoto en toda Nicaragua y visita a domicilio en Managua.",
+  "lang": "es-NI",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#312e81",
+  "icons": [
+    {
+      "src": "/static/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/img/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/og-home.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

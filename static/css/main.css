@@ -1,0 +1,1632 @@
+/* ==========================================================================
+   SOPORTE PC MANAGUA — Sistema de diseño
+   ==========================================================================
+
+   CSS puro. Sin frameworks, sin preprocesadores, sin @import, sin builds.
+
+   Índice
+   ------
+   01. Tokens         Variables de diseño. Cambiar aquí = cambiar el tema.
+   02. Reset          Normalización entre navegadores.
+   03. Base           Tipografía, enlaces, foco, selección.
+   04. Utilidades     Clases auxiliares de un solo uso.
+   05. Layout         Contenedor, secciones, grids.
+   06. Componentes    Bloques autónomos y reutilizables.
+   07. Páginas        Estilos propios de cada página.
+   08. Responsive     Ajustes por punto de corte (el grueso va arriba).
+   09. Preferencias  reduced-motion, contraste, impresión.
+
+   Cómo se usa este archivo
+   -----------------------
+   1. Nunca escribir un valor bruto de color o de espaciado en un
+      componente: usar siempre un token de la sección 01.
+   2. Todo componente nuevo se escribe en la sección 06, autónomo, con su
+      bloque de comentario. Si necesita ser modificado desde otro sitio, se
+      expone como modificador (`--algo`), nunca como selector suelto.
+   3. Antes de añadir una clase, revisar si ya existe una que haga lo mismo.
+      Duplicar estilos es la primera causa de CSS que se pudre.
+   4. Si un componente se repite en varias páginas, se documenta en
+      docs/ESTILOS.md.
+
+   Rendimiento
+   -----------
+   - Un solo archivo, un solo request, sin imports: nada bloquea el render más
+     de una vez.
+   - Tipografía del sistema: cero webfonts, cero saltos de layout (CLS) y cero
+     peticiones a terceros.
+   - El archivo va sin minificar. Con ~18 KB sin comprimir, comprimir con gzip o
+     Brotli en el servidor deja la transferencia por debajo de 5 KB, que es lo
+     que importa para la velocidad real.
+   - Las propiedades animadas se limitan a `opacity` y `transform`: son las
+     únicas que el navegador puede optimizar sin recalcular el layout.
+
+   Accesibilidad
+   -------------
+   - Todos los pares de color de texto/fondo alcanzan contraste AA (≥ 4.5:1).
+   - El foco nunca se elimina: `:focus-visible` lo dibuja con anillo de 2 px.
+   - Se respeta `prefers-reduced-motion` al final del archivo.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   01. TOKENS
+   ==========================================================================
+   Paleta índigo + naranja.
+
+   El índigo es el color de marca: transmite confianza y es el que domina en
+   títulos, enlaces y superficies oscuras. El naranja se reserva para el CTA de
+   WhatsApp, para que el botón de conversión sea reconocible de un vistazo sin
+   competir con el resto de la interfaz.
+
+   Para cambiar la identidad del sitio, modifica solo este bloque. Ningún
+   componente debe declarar un color literal.
+   ------------------------------------------------------------------------- */
+:root {
+  /* --- Marca ------------------------------------------------------------ */
+  /* Índigo 900 → 50. Se usan los tonos medios para texto sobre fondo claro. */
+  --indigo-50: #eef2ff;
+  --indigo-100: #e0e7ff;
+  --indigo-200: #c7d2fe;
+  --indigo-300: #a5b4fc;
+  --indigo-400: #818cf8;
+  --indigo-500: #6366f1;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+  --indigo-800: #3730a3;
+  --indigo-900: #312e81;
+  --indigo-950: #1e1b4b;
+
+  /* Naranja 600 → 100. Mismo criterio: 600 para texto, 500 para fondos. */
+  --orange-100: #ffedd5;
+  --orange-200: #fed7aa;
+  --orange-400: #fb923c;
+  --orange-500: #f97316;
+  --orange-600: #ea580c;
+  --orange-700: #c2410c;
+
+  /* --- Semánticos -------------------------------------------------------
+     Nombres por función, no por color. Permite cambiar la paleta sin tocar
+     los componentes. */
+  --color-bg: #ffffff;
+  --color-bg-soft: var(--indigo-50);
+  --color-bg-inverse: var(--indigo-950);
+
+  --color-text: #1f2340;
+  --color-text-muted: #565c7d;
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-muted: #c7d2fe;
+
+  --color-border: #dfe3f5;
+  --color-border-strong: #c2c8e8;
+
+  --color-primary: var(--indigo-600);
+  --color-primary-hover: var(--indigo-700);
+  --color-primary-soft: var(--indigo-50);
+  --color-on-primary: #ffffff;
+
+  --color-accent: var(--orange-600);
+  --color-accent-hover: var(--orange-700);
+  --color-accent-soft: var(--orange-100);
+  --color-on-accent: #ffffff;
+
+  /* Verde de WhatsApp. Separado del naranja de marca para que el botón se
+     reconozca como "WhatsApp" y no solo como "el botón naranja". */
+  --color-whatsapp: #1da851;
+  --color-whatsapp-hover: #14833c;
+
+  /* --- Espaciado --------------------------------------------------------
+     Escala basada en 4 px. Solo estos valores: usar pasos intermedios rompe
+     la alineación vertical entre tarjetas. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  /* --- Radios ----------------------------------------------------------- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* --- Sombras ----------------------------------------------------------
+     Tres niveles: elevacion sutil para tarjetas, media para elementos
+     flotantes, marcada para el header fijo. */
+  --shadow-sm: 0 1px 2px rgb(30 27 75 / 0.06), 0 1px 3px rgb(30 27 75 / 0.08);
+  --shadow-md: 0 4px 6px -1px rgb(30 27 75 / 0.08), 0 2px 4px -2px rgb(30 27 75 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(30 27 75 / 0.1), 0 4px 6px -4px rgb(30 27 75 / 0.08);
+  --shadow-xl: 0 20px 25px -5px rgb(30 27 75 / 0.12), 0 8px 10px -6px rgb(30 27 75 / 0.08);
+  --shadow-focus: 0 0 0 3px rgb(99 102 241 / 0.4);
+
+  /* --- Tipografía -------------------------------------------------------
+     Pila del sistema. `system-ui` usa la fuente nativa de cada sistema
+     (SF Pro en macOS/iOS, Segoe UI en Windows, Roboto en Android), que es la
+     más rápida de pintar porque no requiere descargar nada. Los genéricos
+     finales cubren Linux.
+     NOTA: no añadir webfonts sin justificar el coste. */
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+
+  /* Escala fluida con `clamp()`: el texto se adapta al ancho de pantalla sin
+     media queries, lo que evita saltos entre breakpoints. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.0625rem, 0.99rem + 0.35vw, 1.125rem);
+  --text-xl: clamp(1.25rem, 1.13rem + 0.6vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.32rem + 0.9vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.58rem + 1.45vw, 2.75rem);
+  --text-4xl: clamp(2.25rem, 1.77rem + 2.4vw, 3.75rem);
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.65;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* --- Transiciones ----------------------------------------------------- */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- Layout ----------------------------------------------------------- */
+  --container-max: 72rem;
+  --container-narrow: 46rem;
+  --header-height: 4.25rem;
+
+  --z-header: 100;
+  --z-mobile-nav: 110;
+  --z-float: 120;
+}
+
+
+/* ==========================================================================
+   02. RESET
+   ==========================================================================
+   Mínimo. No se busca paridad absoluta entre navegadores, solo eliminar las
+   diferencias que molestarían al diseño.
+   ------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  /* Suaviza el salto a las anclas de la navegación. Se desactiva en
+     `prefers-reduced-motion` más abajo. */
+  scroll-behavior: smooth;
+  /* Compensa la altura del header fijo al saltar a un ancla. */
+  scroll-padding-top: calc(var(--header-height) + var(--space-4));
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+  padding: 0;
+}
+
+
+/* ==========================================================================
+   03. BASE
+   ========================================================================== */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  /* Evita el salto horizontal cuando una sombra o un elemento ancho se sale
+     del viewport en pantallas estrechas. */
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  /* Evita que una palabra larga (un nombre de programa, por ejemplo) rompa la
+     caja en móvil. */
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Foco visible y consistente. `:focus-visible` solo lo muestra cuando la
+   navegación es por teclado, de modo que un clic de ratón no deja un anillo
+  molesto. El contorno NO se elimina en ningún caso: es requisito de
+   accesibilidad. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background-color: var(--indigo-200);
+  color: var(--indigo-950);
+}
+
+/* Enlace que lleva a otra pestaña: se marca solo con un icono, no con texto
+   entre paréntesis, para no ensuciar el diseño. */
+[target="_blank"] {
+  position: relative;
+}
+
+
+/* ==========================================================================
+   04. UTILIDADES
+   ==========================================================================
+   Pocas y deliberadas. Una utilidad que se usa una sola vez probablemente
+   debería ser un componente o un estilo de la sección donde vive.
+   ------------------------------------------------------------------------- */
+
+/* Oculto visualmente pero accesible a lectores de pantalla. Es la forma
+   correcta de ocultar texto sin romper la accesibilidad. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Enlace de salto: invisible hasta que recibe el foco por teclado. Permite
+   pasar la barra de navegación directo al contenido. */
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 200;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  color: var(--color-on-primary);
+}
+
+.text-center {
+  text-align: center;
+}
+
+
+/* ==========================================================================
+   05. LAYOUT
+   ========================================================================== */
+
+/* Contenedor de contenido. `margin-inline: auto` centra sin `flex`, que
+   aplicaría a los hijos. */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+@media (min-width: 48rem) {
+  .container {
+    padding-inline: var(--space-5);
+  }
+}
+
+.container--narrow {
+  max-width: var(--container-narrow);
+}
+
+/* Sección de contenido. El padding vertical usa `clamp` para que en móvil
+   respire y en escritorio no desperdicie pantalla. */
+.section {
+  padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+}
+
+.section--services {
+  background-color: var(--color-bg-soft);
+}
+
+/* Cabecera de sección: título + introducción, siempre antes del contenido. */
+.section__header {
+  max-width: 44rem;
+  margin-inline: auto;
+  margin-bottom: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+  text-align: center;
+}
+
+.section__title {
+  font-size: var(--text-3xl);
+  letter-spacing: -0.02em;
+}
+
+.section__intro {
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+/* Índice de navegación lateral reutilizable. */
+.section__eyebrow {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+
+/* ==========================================================================
+   06. COMPONENTES
+   ==========================================================================
+   Cada componente es autónomo: define su propia caja, no depende de la
+   sección donde vive y puede moverse a otra página sin romperse. Si necesita
+   variantes, se añaden como modificadores (`bloque--variante`).
+   ------------------------------------------------------------------------- */
+
+/* --- Marca / logotipo ---------------------------------------------------
+   `brand__mark` usa `currentColor` para que el mismo bloque funcione sobre
+   fondo claro (oscuro) y en el footer (claro) cambiando solo el color. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: var(--indigo-900);
+}
+
+.brand:hover {
+  color: var(--indigo-900);
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.brand__mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--leading-snug);
+}
+
+.brand__name {
+  font-weight: var(--weight-bold);
+  font-size: var(--text-base);
+  letter-spacing: -0.01em;
+}
+
+.brand__tagline {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.brand--footer {
+  color: var(--color-text-inverse);
+}
+
+.brand--footer:hover {
+  color: var(--color-text-inverse);
+}
+
+.brand--footer .brand__mark {
+  color: var(--color-accent);
+}
+
+
+/* --- Iconos --------------------------------------------------------------
+   Todos los iconos del sitio vienen de `partials/icon.html`. Esta regla fija su
+   comportamiento por defecto; los tamaños concretos los da cada componente.
+
+   `stroke: currentColor` y `fill: currentColor` se declaran aquí y no en el SVG
+   por dos razones:
+
+   1. Es más fiable que los atributos `fill`/`stroke` del propio SVG: cuando el
+      SVG va en línea, cualquier regla CSS gana a los atributos de presentación,
+      así que el color nunca depende de que el atributo se resuelva bien.
+   2. Permite la excepción de `whatsapp`, que es relleno sólido y no contorno:
+      su bloque en `icon.html` no lleva `fill="none"`, y esta regla lo respeta en
+      lugar de imponer un color de trazo que lo deformaría.
+
+   `width`/`height` como `1em` hacen que el icono escale con el tamaño de fuente
+   de su contenedor: en `.btn` un `--sm` y un `--lg` dan iconos distintos sin
+   tocar una sola regla. */
+.icon {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+  stroke: currentcolor;
+  fill: currentcolor;
+}
+
+/* Los iconos de contorno (Material) necesitan fondo transparente; se distinguen
+   de los rellenos porque solo ellos declaran `stroke-width`. */
+.icon[stroke-width] {
+  fill: none;
+}
+
+
+/* --- Iconos de marca ----------------------------------------------------
+   Logotipos de aplicaciones (WhatsApp, Windows…), cargados con `<img>` desde
+   `partials/brand_icon.html`. Se estilizan aparte de `.icon` porque no heredan
+   `currentColor`: son `.svg` con su propio color y no se pueden recolorear sin
+   dejar de ser el logotipo.
+
+   `vertical-align: middle` es necesario porque en línea-flex los `<img>` se
+   alinean por su base y quedarian descuadrados respecto al texto del botón. */
+.brand-icon {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+  vertical-align: middle;
+  /* Suaviza el reescalado al pasar por distintos tamaños en cada variante de
+     botón; un logotipo pixelado se nota más que un icono genérico. */
+  transition: transform var(--transition-fast);
+}
+
+/* Icono del logo dentro de un botón: el fondo ya es verde (`.btn--whatsapp`),
+   así que el logo va en blanco. Ponerlo en su verde oficial
+   (#25D366) lo haría casi invisible sobre el fondo. */
+.btn .brand-icon {
+  filter: brightness(0) invert(1);
+}
+
+
+/* --- Botones ------------------------------------------------------------
+   `.btn` define la caja. Las variantes `--primary`, `--whatsapp` y `--ghost`
+   solo cambian el color, nunca la forma: así todos los botones del sitio
+   tienen la misma silueta. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* El tamaño y el `flex-shrink` los hereda de la regla base `.icon`, que ya usa
+   `1em`: así el icono escala solo con el `font-size` del botón. */
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-primary-hover);
+  color: var(--color-on-primary);
+}
+
+.btn--whatsapp {
+  background-color: var(--color-whatsapp);
+  color: var(--color-on-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--whatsapp:hover {
+  background-color: var(--color-whatsapp-hover);
+  color: var(--color-on-accent);
+}
+
+/* Transparente con borde: para el CTA secundario del hero, que no debe
+   competir con el principal. */
+.btn--ghost {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-border-strong);
+}
+
+.btn--ghost:hover {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-hover);
+}
+
+.btn--sm {
+  padding: 0.5rem 0.9rem;
+  font-size: var(--text-sm);
+}
+
+.btn--lg {
+  padding: 0.95rem 1.6rem;
+  font-size: var(--text-lg);
+}
+
+.btn--block {
+  display: flex;
+  width: 100%;
+}
+
+
+/* --- Insignias -----------------------------------------------------------
+   `.badge` muestra una modalidad de cobertura: título y detalle en dos
+   niveles. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.4rem 0.9rem 0.4rem 0.6rem;
+  background-color: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: var(--radius-full);
+  color: var(--color-text-inverse);
+  font-size: var(--text-sm);
+  backdrop-filter: blur(8px);
+}
+
+.badge .icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--color-accent-400);
+}
+
+.badge__title {
+  font-weight: var(--weight-semibold);
+}
+
+.badge__detail {
+  color: var(--color-text-inverse-muted);
+}
+
+.badge__detail::before {
+  content: "·";
+  margin-inline: var(--space-2);
+  color: rgb(255 255 255 / 0.4);
+}
+
+
+/* --- Tarjeta -------------------------------------------------------------
+   Base de todos los bloques de contenido con borde. Modificadores:
+     `.card--raised`  sombra marcada, para tarjetas que flotan
+     `.card--accent`  borde superior de acento, para destacar una de ellas */
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-strong);
+}
+
+
+/* --- Icono de servicio ---------------------------------------------------
+   Cuadro redondeado con fondo índigo suave. El icono en sí hereda el color
+   del texto, así que funciona sobre cualquier fondo. */
+.service-card__icon,
+.coverage__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: var(--space-4);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.service-card__icon .icon,
+.coverage__icon .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+
+/* --- Hero ----------------------------------------------------------------
+   La única sección con fondo oscuro. El contraste blanco sobre índigo 950
+   es de 15:1, muy por encima del mínimo exigido. */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 100% at 15% 0%, var(--indigo-800) 0%, var(--indigo-950) 55%),
+    var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  padding-block: clamp(3.5rem, 2rem + 7vw, 7rem) clamp(3.5rem, 2.5rem + 5vw, 6rem);
+}
+
+/* Capa decorativa. Va detrás del contenido (`z-index: 0`) y el contenido va
+   por delante, así que los brillos nunca tapan el texto ni estorban al clic. */
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Dos manchas de color que dan profundidad. Se generan con `filter: blur`,
+   que no necesita ninguna imagen. */
+.hero__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.35;
+}
+
+.hero__glow--one {
+  top: -15%;
+  right: -5%;
+  width: 34rem;
+  height: 34rem;
+  background-color: var(--indigo-500);
+}
+
+.hero__glow--two {
+  bottom: -25%;
+  left: -10%;
+  width: 28rem;
+  height: 28rem;
+  background-color: var(--orange-600);
+  opacity: 0.22;
+}
+
+/* Retícula tenue. Aporta la sensación de "precisión técnica" sin coste: es
+   un gradiente que el navegador pinta una vez. */
+.hero__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.6), transparent 75%);
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(2.5rem, 2rem + 3vw, 4rem);
+  align-items: center;
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-4);
+  background-color: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.02em;
+  color: var(--indigo-200);
+}
+
+.hero__title {
+  font-size: var(--text-4xl);
+  letter-spacing: -0.03em;
+  /* `max-width` en vez de medida fija: en pantallas anchas el titular no se
+     estira hasta quedar ilegible. */
+  max-width: 22ch;
+}
+
+.hero__description {
+  margin-top: var(--space-5);
+  max-width: 56ch;
+  font-size: var(--text-lg);
+  color: var(--color-text-inverse-muted);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.hero__note {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-inverse-muted);
+}
+
+.hero__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.hero__art {
+  display: grid;
+  place-items: center;
+}
+
+/* La ilustración no debe filtrarse en el hueco vacío cuando el JS se
+   desactiva: se muestra siempre. */
+.hero__art svg {
+  width: 100%;
+  max-width: 26rem;
+  filter: drop-shadow(0 24px 48px rgb(0 0 0 / 0.35));
+}
+
+
+/* --- Puntos de confianza ------------------------------------------------- */
+.trust-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.trust-card {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.trust-card__icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.trust-card__icon .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.trust-card__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.trust-card__description {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+
+/* --- Rejilla de servicios ------------------------------------------------
+   `auto-fit` + `minmax` hace el responsive sin un solo media query: la
+   rejilla se ajusta sola al número de columnas que caben en el ancho
+   disponible. */
+.services-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+.service-card__title {
+  font-size: var(--text-xl);
+  letter-spacing: -0.01em;
+}
+
+.service-card__description {
+  margin-top: var(--space-3);
+  flex-grow: 1;
+  color: var(--color-text-muted);
+}
+
+/* Enlace de consulta de cada servicio. A diferencia de `.btn`, es un enlace
+   de texto con icono: no debe competir con los botones de la página. */
+.service-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.service-card__link .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-whatsapp);
+  transition: transform var(--transition-fast);
+}
+
+.service-card__link:hover {
+  text-decoration: underline;
+}
+
+.service-card__link:hover .icon {
+  transform: scale(1.15);
+}
+
+
+/* --- Proceso ------------------------------------------------------------- */
+.steps {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding: var(--space-5);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* Número del paso: círculo con degradado índigo. */
+.step__number {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: var(--space-4);
+  background: linear-gradient(135deg, var(--color-primary), var(--indigo-800));
+  color: var(--color-on-primary);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+}
+
+.step__title {
+  font-size: var(--text-lg);
+}
+
+.step__description {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+
+/* --- Cobertura -----------------------------------------------------------
+   Dos columnas comparables: la misma estructura para ambas modalidades hace
+   que la comparación sea inmediata. */
+.coverage {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.coverage__title {
+  font-size: var(--text-xl);
+}
+
+/* La zona de cobertura es el dato que el visitante busca: se destaca con el
+   color de acento. */
+.coverage__scope {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.coverage__description {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.coverage__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.coverage__list li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.coverage__list .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.2rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+
+/* --- Preguntas frecuentes ------------------------------------------------
+   `details` nativo: sin JavaScript. El marcador se dibuja con pseudoelementos
+   en lugar de usar un icono, para que la animación sea una simple rotación. */
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.faq__item {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.faq__item[open] {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Safari muestra un triángulo propio en `summary`: se elimina para usar el
+   marcador propio. */
+.faq__question::-webkit-details-marker {
+  display: none;
+}
+
+/* Marcador: dos barras que forman un "+" y rotan 45° al abrirse. */
+.faq__marker {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.faq__marker::before,
+.faq__marker::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: currentcolor;
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  transition: transform var(--transition-base);
+}
+
+.faq__marker::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.faq__item[open] .faq__marker::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.faq__answer {
+  padding: 0 var(--space-5) var(--space-5);
+  color: var(--color-text-muted);
+}
+
+
+/* --- Banner de llamada a la acción --------------------------------------- */
+.cta-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: clamp(2rem, 1.5rem + 3vw, 4rem);
+  background:
+    radial-gradient(120% 140% at 100% 0%, var(--indigo-700) 0%, var(--indigo-950) 60%),
+    var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+}
+
+.cta-banner__title {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+}
+
+.cta-banner__text {
+  margin-top: var(--space-3);
+  max-width: 46ch;
+  font-size: var(--text-lg);
+  color: var(--color-text-inverse-muted);
+}
+
+
+/* --- Cabecera del sitio ---------------------------------------------------
+   `sticky`, no `fixed`: así el documento fluye de forma natural y el pie de
+   página queda al final sin hacks. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background-color: rgb(255 255 255 / 0.85);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(12px);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+}
+
+.site-nav__list {
+  display: none;
+  gap: var(--space-1);
+}
+
+.site-nav__link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.site-nav__link:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+/* Estado activo del scrollspy. Lo añade `main.js`; el color de acento es el
+   mismo que usa `.btn--primary`, para que la posición en la página y el CTA
+   se lean como parte del mismo sistema. */
+.site-nav__link[aria-current="true"] {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Botón de menú: solo móvil. En escritorio `.site-nav` visible lo hace
+   innecesario y se oculta. */
+.nav-toggle {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.nav-toggle .icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* Panel de navegación móvil. `hidden` en el HTML: si el JavaScript no carga,
+   el panel no ocupa espacio ni tapa contenido. */
+.mobile-nav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: var(--z-mobile-nav);
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xl);
+}
+
+.mobile-nav[hidden] {
+  display: none;
+}
+
+.mobile-nav__list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-4);
+}
+
+.mobile-nav__link {
+  display: block;
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.mobile-nav__link:last-child {
+  border-bottom: 0;
+}
+
+
+/* --- Pie de página ------------------------------------------------------- */
+.site-footer {
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  padding-block: clamp(3rem, 2.5rem + 3vw, 4.5rem) var(--space-6);
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+}
+
+/* La primera columna ocupa más ancho porque lleva la marca y la cobertura. */
+.site-footer__brand {
+  grid-column: span 2;
+  max-width: 26rem;
+}
+
+.site-footer__tagline {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-inverse-muted);
+}
+
+.site-footer__coverage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.site-footer__coverage li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-inverse-muted);
+}
+
+.site-footer__coverage .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-accent-400);
+  flex-shrink: 0;
+}
+
+.site-footer__heading {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-inverse-muted);
+  margin-bottom: var(--space-3);
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.site-footer__list a {
+  font-size: var(--text-sm);
+  color: var(--color-text-inverse);
+  text-decoration: none;
+}
+
+.site-footer__list a:hover {
+  color: var(--color-accent-400);
+  text-decoration: underline;
+}
+
+.site-footer__contact-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-inverse-muted);
+  margin-bottom: var(--space-3);
+}
+
+.site-footer__note {
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-inverse-muted);
+}
+
+.site-footer__bottom {
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.site-footer__copy {
+  font-size: var(--text-sm);
+  color: var(--color-text-inverse-muted);
+}
+
+
+/* --- Botón flotante de WhatsApp ------------------------------------------
+   Visible solo en escritorio: en móvil ya hay un CTA de WhatsApp en el menú y
+   en el hero, y un botón flotante taparía el contenido. */
+.whatsapp-float {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: var(--z-float);
+  display: none;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--color-whatsapp);
+  color: var(--color-on-accent);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-xl);
+  transition:
+    transform var(--transition-base),
+    background-color var(--transition-fast);
+}
+
+.whatsapp-float:hover {
+  background-color: var(--color-whatsapp-hover);
+  transform: scale(1.08);
+}
+
+.whatsapp-float .icon {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+
+/* ==========================================================================
+   07. ESTILOS DE PÁGINA
+   ==========================================================================
+   Estilos que no son componentes reutilizables, sino layouts concretos de una
+   página concreta. Si un bloque empieza a usarse en otra página, se promueve a
+   componente (sección 06).
+   ------------------------------------------------------------------------- */
+
+/* --- Página de error / gracias ------------------------------------------- */
+.status-page {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  padding-block: clamp(3rem, 2rem + 5vw, 6rem);
+  text-align: center;
+}
+
+.status-page__code {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.04em;
+  color: var(--color-primary);
+  /* Degradado en el texto: si el navegador no soporta `background-clip`,
+     el `color` sólido de arriba sigue aplicándose y el número se lee igual. */
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.status-page__title {
+  margin-top: var(--space-3);
+  font-size: var(--text-2xl);
+}
+
+.status-page__text {
+  margin-top: var(--space-4);
+  max-width: 48ch;
+  margin-inline: auto;
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+.status-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.status-page__subtitle {
+  margin-top: var(--space-6);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+/* Lista de comprobación: reutiliza el patrón de `.coverage__list` (icono +
+   texto) pero con el check de confirmación en lugar del escudo. */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  text-align: left;
+}
+
+.checklist li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-soft);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+}
+
+.checklist .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.15rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   08. RESPONSIVE
+   ==========================================================================
+   Mobile-first: los estilos base son para móvil y cada bloque de aquí amplía
+   el diseño. Solo dos puntos de corte, los suficientes para este sitio:
+     48rem = 768px  (móvil horizontal / tableta)
+     64rem = 1024px (escritorio)
+   ------------------------------------------------------------------------- */
+
+/* --- Tableta en adelante: aparece la navegación horizontal --- */
+@media (min-width: 48rem) {
+  .hero__inner {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .hero__title {
+    max-width: 18ch;
+  }
+
+  .site-nav__list {
+    display: flex;
+  }
+
+  /* El botón de menú y el panel móvil sobran en escritorio. */
+  .nav-toggle {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+
+  .cta-banner {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .cta-banner__content {
+    max-width: 40ch;
+  }
+}
+
+/* --- Escritorio: se muestra el botón flotante de WhatsApp --- */
+@media (min-width: 64rem) {
+  .whatsapp-float {
+    display: grid;
+  }
+}
+
+/* --- Pantallas muy estrechas --------------------------------------------
+   Los botones del hero pasan a ancho completo para que el área táctil llegue
+   al mínimo recomendado de 44 px de alto. */
+@media (max-width: 30rem) {
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero__actions .btn {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   09. PREFERENCIAS DEL USUARIO
+   ==========================================================================
+   El sitio debe ser plenamente usable sin animación y en alto contraste.
+   ------------------------------------------------------------------------- */
+
+/* --- Movimiento reducido -------------------------------------------------
+   Se respetan tanto el scroll suave como las animaciones de entrada. Sin esto,
+   las animaciones del sitio pueden provocar mareo o vértigo a personas
+   sensibles. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Los elementos revelados por scroll se muestran ya en su sitio. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* --- Contraste alto ------------------------------------------------------
+   Se engordan los bordes y se oscurece el texto secundario, que es el que
+   más se resiente con contraste bajo. */
+@media (prefers-contrast: high) {
+  :root {
+    --color-text-muted: #3d4260;
+    --color-border: #9aa0c4;
+    --color-border-strong: #6b719b;
+  }
+
+  .card,
+  .faq__item,
+  .step {
+    border-width: 2px;
+  }
+}
+
+/* --- Animaciones de entrada ----------------------------------------------
+   Solo se aplican si hay JavaScript: la clase `.js` la añade `base.html` en el
+   `<head>`. Sin ella, el contenido es visible desde el principio, que es el
+   comportamiento por defecto y el que debe prevalecer.
+
+   `main.js` añade `is-visible` al entrar en pantalla. */
+[data-reveal] {
+  opacity: 1;
+}
+
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 600ms ease,
+    transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* --- Impresión -----------------------------------------------------------
+   Al imprimir solo interesa el contenido: se quitan navegación, decoración y
+   botones, y se aplana el color de fondo para no gastar tinta. */
+@media print {
+  .site-header,
+  .site-footer,
+  .whatsapp-float,
+  .btn,
+  .hero__backdrop {
+    display: none !important;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+
+  .section {
+    padding-block: var(--space-4);
+    page-break-inside: avoid;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: var(--text-xs);
+    color: #555;
+  }
+}

@@ -1,0 +1,115 @@
+{% load static %}
+{% comment %}
+  Iconos de marca (logotipos de aplicaciones).
+
+  Uso:  {% include "partials/brand_icon.html" with name="whatsapp" size=24 %}
+
+  Diferencia con `partials/icon.html`:
+
+  - `icon.html` son iconos de INTERFAZ (Material Symbols): genéricos, en línea,
+    heredan el color del texto y cambian con el contexto.
+  - Este partial son logotipos de MARCA: su forma es la identidad, así que van
+    en su propio archivo `.svg` y se cargan con `<img>`. Un logotipo no puede
+    alterarse para adaptarse a un fondo, y un archivo separado permite
+    verificarlo y sustituirlo sin tocar código.
+
+  Los archivos viven en `static/img/icons/` (ver su README para el origen y la
+  licencia de cada uno).
+
+  `size` controla el ancho y alto en píxeles y se escribe como atributo `width`/
+  `height` a propósito: reserva el espacio antes de que el SVG cargue y evita el
+  desplazamiento de layout (CLS).
+
+  `alt` va vacío por defecto porque el icono es decorativo: el texto que lo
+  acompaña ya dice qué hace. Un logo dentro de un enlace sin texto debería pasar
+  `label` con el texto alternativo que corresponda.
+{% endcomment %}
+{% if name == "whatsapp" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/whatsapp.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "windows" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/windows.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "vlc" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/vlcmediaplayer.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "firefox" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/firefox.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "chrome" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/googlechrome.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "opera" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/opera.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "ubuntu" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/ubuntu.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "linux" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/linux.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "libreoffice" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/libreoffice.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "android" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/android.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% elif name == "apple" %}
+  <img class="brand-icon"
+       src="{% static 'img/icons/apple.svg' %}"
+       alt="{{ label }}"
+       width="{{ size|default:24 }}"
+       height="{{ size|default:24 }}"
+       loading="lazy"
+       decoding="async">
+{% endif %}

@@ -1,0 +1,84 @@
+{% load landing_tags %}
+{% load static %}
+{% comment %}
+  Pie de pagina.
+
+  Reune en un solo lugar las tres palancas de confianza que quedan fuera del
+  contenido principal: cobertura, contacto directo y una segunda entrada a los
+  servicios por enlace interno. Los enlaces ancla ayudan al rastreo, porque
+  cada seccion tiene su propia URL navegable.
+{% endcomment %}
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <a class="brand brand--footer" href="{% url 'landing:home' %}">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" focusable="false">
+            <rect width="32" height="32" rx="9" fill="currentColor" />
+            <path d="M9 11.5h14M9 16h14M9 20.5h8" stroke="#1e1b4b" stroke-width="2.4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="brand__text">
+          <span class="brand__name">{{ business.name }}</span>
+        </span>
+      </a>
+      <p class="site-footer__tagline">{{ footer_legal }}</p>
+      <ul class="site-footer__coverage">
+        <li>
+          {% include "partials/icon.html" with name="home" %}
+          <span>Visita a domicilio en Managua</span>
+        </li>
+        <li>
+          {% include "partials/icon.html" with name="public" %}
+          <span>Soporte remoto en toda Nicaragua</span>
+        </li>
+      </ul>
+    </div>
+    {% if services %}
+      <nav class="site-footer__col" aria-labelledby="footer-servicios">
+        <h2 class="site-footer__heading" id="footer-servicios">{{ footer_services_title }}</h2>
+        <ul class="site-footer__list">
+          {% for service in services %}
+            <li>
+              <a href="#{{ service.id }}">{{ service.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
+    {% if is_home %}
+      <nav class="site-footer__col" aria-labelledby="footer-nav">
+        <h2 class="site-footer__heading" id="footer-nav">{{ footer_nav_title }}</h2>
+        <ul class="site-footer__list">
+          <li>
+            <a href="#servicios">Servicios</a>
+          </li>
+          <li>
+            <a href="#proceso">Cómo funciona</a>
+          </li>
+          <li>
+            <a href="#cobertura">Cobertura</a>
+          </li>
+          <li>
+            <a href="#faq">Preguntas frecuentes</a>
+          </li>
+        </ul>
+      </nav>
+    {% endif %}
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Contacto</h2>
+      <p class="site-footer__contact-label">Escríbenos por WhatsApp</p>
+      <a class="btn btn--whatsapp btn--block"
+         href="{{ 'Hola, quiero solicitar una cotización de soporte técnico.'|whatsapp_link }}"
+         target="_blank"
+         rel="noopener">
+        {% include "partials/brand_icon.html" with name="whatsapp" %}
+        <span>{{ business.phone_display }}</span>
+      </a>
+      <p class="site-footer__note">Atención en español. Cotización antes de comenzar.</p>
+    </div>
+  </div>
+  <div class="container site-footer__bottom">
+    <p class="site-footer__copy">© {{ business.name }}. Todos los derechos reservados.</p>
+  </div>
+</footer>
